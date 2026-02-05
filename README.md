@@ -23,7 +23,21 @@ DuckDuckGo + Google + Bing enabled.
 openclaw plugins install -l /path/to/searxng-search
 ```
 
-### 3. Configure
+### 3. Disable built-in search
+
+```json
+{
+  "tools": {
+    "web": {
+      "search": {
+        "enabled": false
+      }
+    }
+  }
+}
+```
+
+### 4. Configure plugin
 
 In your OpenClaw config (`openclaw.yaml` or via `openclaw configure`):
 
@@ -41,9 +55,17 @@ plugins:
         timeout: 10000
 ```
 
-### 4. Enable for agents
+### 5. Restart gateway
 
-The tool is registered as **optional** (`searxng_web_search`). Add it to your
+```bash
+openclaw gateway restart
+```
+
+Agents will now use SearXNG for all `web_search` calls — same tool name, same parameters, no agent changes needed.
+
+### 6. Enable for agents
+
+The tool is registered as **optional** (`web_search`). Add it to your
 agent's tool allowlist:
 
 ```yaml
@@ -52,7 +74,7 @@ agents:
     - id: my-agent
       tools:
         allow:
-          - searxng_web_search
+          - web_search
 ```
 
 ### 5. Restart the gateway
@@ -63,7 +85,7 @@ openclaw gateway restart
 
 ## Tool Reference
 
-### `searxng_web_search`
+### `web_search`
 
 | Parameter   | Type   | Required | Description |
 |-------------|--------|----------|-------------|
@@ -117,7 +139,7 @@ curl http://localhost:8888/healthz
 ## Architecture
 
 ```
-Agent → searxng_web_search tool → SearxngClient → SearXNG API (localhost:8888)
+Agent → web_search tool → SearxngClient → SearXNG API (localhost:8888)
                                                      ↓
                                                DuckDuckGo / Google / Bing
 ```
