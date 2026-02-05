@@ -1,10 +1,10 @@
 /**
  * SearXNG web_search agent tool implementation
  *
- * Registers as `searxng_web_search` to avoid clashing with the built-in
- * `web_search` tool. Enable it via agent allowlists:
+ * Replaces the built-in
+ * Disable built-in search (tools.web.search.enabled: false) then enable via allowlists:
  *
- *   agents.list[].tools.allow: ["searxng_web_search"]
+ *   agents.list[].tools.allow: ["web_search"]
  */
 
 import { SearxngClient } from './searxng-client.js';
@@ -66,7 +66,7 @@ export function createSearxngSearchTool(config?: SearxngPluginConfig) {
 
   return {
     label: 'SearXNG Web Search',
-    name: 'searxng_web_search',
+    name: 'web_search',
     description:
       'Search the web using a self-hosted SearXNG instance. Returns titles, URLs, and descriptions. Supports freshness filtering (pd/pw/pm/py) and language/country targeting.',
     parameters: TOOL_SCHEMA,

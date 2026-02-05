@@ -1,7 +1,7 @@
 /**
  * SearXNG Search — OpenClaw Plugin Entry Point
  *
- * Registers the `searxng_web_search` agent tool powered by a self-hosted
+ * Registers the `web_search` agent tool powered by a self-hosted
  * SearXNG instance. Configure via plugins.entries.searxng-search.config:
  *
  *   {
@@ -72,6 +72,6 @@ export function register(api: OpenClawPluginApi) {
   api.registerTool(searchTool, { optional: true });
 
   api.logger.info(
-    '🔍 SearXNG Search: registered tool "searxng_web_search" (optional — add to agent allowlist)',
+    '🔍 SearXNG Search: registered tool "web_search" (optional — add to agent allowlist)',
   );
 }
