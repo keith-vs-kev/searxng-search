@@ -1,0 +1,79 @@
+# SearXNG settings for OpenClaw plugin
+# Docs: https://docs.searxng.org/admin/settings/settings.html
+
+use_default_settings: true
+
+general:
+  instance_name: "OpenClaw SearXNG"
+  debug: false
+  privacypolicy_url: false
+  contact_url: false
+  enable_metrics: false
+
+search:
+  safe_search: 0
+  autocomplete: ""
+  default_lang: "en"
+  formats:
+    - html
+    - json
+
+server:
+  secret_key: "openclaw-searxng-change-me-in-production"
+  method: "GET"
+  bind_address: "0.0.0.0"
+  port: 8080
+  limiter: false
+  image_proxy: false
+  # Localhost only — no public access
+  public_instance: false
+
+ui:
+  static_use_hash: true
+  default_theme: "simple"
+  results_on_new_tab: false
+
+redis:
+  url: "redis://redis:6379/0"
+
+engines:
+  # DuckDuckGo — reliable, no API key needed
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    disabled: false
+
+  # Google — good results, may rate-limit
+  - name: google
+    engine: google
+    shortcut: go
+    disabled: false
+
+  # Bing — Microsoft search
+  - name: bing
+    engine: bing
+    shortcut: bi
+    disabled: false
+
+  # Wikipedia — for reference/context
+  - name: wikipedia
+    engine: wikipedia
+    shortcut: wp
+    disabled: false
+
+  # Disable engines that need API keys or are unreliable
+  - name: brave
+    engine: brave
+    disabled: true
+
+  - name: google news
+    engine: google_news
+    shortcut: gn
+    disabled: false
+
+outgoing:
+  request_timeout: 5.0
+  max_request_timeout: 10.0
+  useragent_suffix: ""
+  pool_connections: 100
+  pool_maxsize: 20
