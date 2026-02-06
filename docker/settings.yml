@@ -25,7 +25,6 @@ server:
   port: 8080
   limiter: false
   image_proxy: false
-  # Localhost only — no public access
   public_instance: false
 
 ui:
@@ -37,40 +36,30 @@ redis:
   url: "redis://redis:6379/0"
 
 engines:
-  # DuckDuckGo — reliable, no API key needed
-  - name: duckduckgo
-    engine: duckduckgo
-    shortcut: ddg
-    disabled: false
-
-  # Google — good results, may rate-limit
+  # Google — primary engine, best results
   - name: google
     engine: google
     shortcut: go
     disabled: false
 
-  # Bing — Microsoft search
+  # Startpage — Google results via privacy proxy (fallback if Google throttles)
+  - name: startpage
+    engine: startpage
+    shortcut: sp
+    disabled: false
+
+  # Bing — force English locale to prevent CJK results
   - name: bing
     engine: bing
     shortcut: bi
     disabled: false
+    language: en
+    region: en-US
 
-  # Wikipedia — for reference/context
+  # Wikipedia — reference/context
   - name: wikipedia
     engine: wikipedia
     shortcut: wp
-    disabled: false
-
-  # Mojeek — independent index (not a meta-engine itself)
-  - name: mojeek
-    engine: mojeek
-    shortcut: mj
-    disabled: false
-
-  # Startpage — Google results via privacy proxy
-  - name: startpage
-    engine: startpage
-    shortcut: sp
     disabled: false
 
   # Wikidata — structured data
@@ -86,13 +75,25 @@ engines:
     disabled: false
     categories: [it]
 
-  # Google News
+  # Google News — current events
   - name: google news
     engine: google_news
     shortcut: gn
     disabled: false
 
-  # Disable engines that need API keys
+  # DISABLED — CAPTCHAs after a few queries
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    disabled: true
+
+  # DISABLED — access denied/suspended after ~5 queries
+  - name: mojeek
+    engine: mojeek
+    shortcut: mj
+    disabled: true
+
+  # DISABLED — needs API key
   - name: brave
     engine: brave
     disabled: true
