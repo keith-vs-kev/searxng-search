@@ -2,8 +2,20 @@
 
 Self-hosted web search for OpenClaw agents, powered by [SearXNG](https://docs.searxng.org/).
 
-Replaces or supplements the built-in Brave/Perplexity `web_search_v2` tool with a
-privacy-respecting, self-hosted meta-search engine. No API keys required.
+No API keys. No rate limits. No monthly bills. Just search.
+
+## Active Engines
+
+| Engine | Purpose |
+|--------|---------|
+| Google | Primary search |
+| Startpage | Google results via privacy proxy (fallback) |
+| Google News | Current events |
+| Wikipedia | Reference & context |
+| Wikidata | Structured data |
+| GitHub | Code search |
+
+> DDG, Bing, and Mojeek were tested and disabled — DDG throws CAPTCHAs, Bing leaks CJK results, Mojeek gets access-denied after ~5 queries. See test reports in the repo for details.
 
 ## Quick Start
 
@@ -14,74 +26,38 @@ cd docker
 docker compose up -d
 ```
 
-This spins up SearXNG on `localhost:8888` with Redis caching and
-DuckDuckGo + Google + Bing enabled.
+Spins up SearXNG on `localhost:8888` with Redis caching. Default locale: `en-NZ`.
 
 ### 2. Install the plugin
 
-```bash
-openclaw plugins install -l /path/to/searxng-search
-```
-
-### 3. Disable built-in search
+Add to your OpenClaw config:
 
 ```json
 {
-  "tools": {
-    "web": {
-      "search": {
-        "enabled": false
+  "plugins": {
+    "load": {
+      "paths": ["/path/to/searxng-search"]
+    },
+    "entries": {
+      "searxng-search": {
+        "enabled": true,
+        "config": {
+          "searxngUrl": "http://localhost:8888",
+          "timeout": 10000
+        }
       }
     }
   }
 }
 ```
 
-### 4. Configure plugin
-
-In your OpenClaw config (`openclaw.yaml` or via `openclaw configure`):
-
-```yaml
-plugins:
-  entries:
-    searxng-search:
-      enabled: true
-      config:
-        searxngUrl: "http://localhost:8888"
-        engines:
-          - duckduckgo
-          - google
-          - bing
-        timeout: 10000
-```
-
-### 5. Restart gateway
+### 3. Restart gateway
 
 ```bash
 openclaw gateway restart
 ```
 
-Agents will now use SearXNG for all `web_search_v2` calls — same tool name, same parameters, no agent changes needed.
-
-### 6. Enable for agents
-
-The tool is registered as **optional** (`web_search_v2`). Add it to your
-agent's tool allowlist:
-
-```yaml
-agents:
-  list:
-    - id: my-agent
-      tools:
-        allow:
-          - web_search_v2
-```
-
-### 5. Restart the gateway
-
-```bash
-openclaw gateway restart
-```
+The `web_search_v2` tool is now available to all agents.
 
 ## Tool Reference
 
@@ -91,8 +67,8 @@ openclaw gateway restart
 |-------------|--------|----------|-------------|
 | `query`     | string | ✅       | Search query string |
 | `count`     | number | ❌       | Number of results (1-10, default: 5) |
-| `country`   | string | ❌       | 2-letter country code (e.g., `US`, `DE`) |
-| `language`  | string | ❌       | ISO language code (e.g., `en`, `de`, `fr`) |
+| `country`   | string | ❌       | 2-letter country code (e.g., `NZ`, `US`) |
+| `language`  | string | ❌       | ISO language code (e.g., `en`, `de`) |
 | `freshness` | string | ❌       | Time filter: `pd` (day), `pw` (week), `pm` (month), `py` (year) |
 
 ### Response format
@@ -114,17 +90,24 @@ openclaw gateway restart
 }
 ```
 
-## Docker Configuration
+## Architecture
 
-The `docker/` directory contains:
+```
+Agent → web_search_v2 → Plugin → SearXNG (localhost:8888) → Google + Startpage + Wikipedia + GitHub
+                                        ↕
+                                  Redis (cache)
+```
 
-- **docker-compose.yml** — SearXNG + Redis stack
-- **settings.yml** — SearXNG configuration with safe defaults
+- **Self-hosted** — runs on your own infrastructure
+- **No API keys** — SearXNG queries search engines directly
+- **Redis caching** — reduces duplicate requests
+- **Localhost only** — port bound to 127.0.0.1
 
-### Customizing engines
+## Configuration
 
-Edit `docker/settings.yml` to enable/disable search engines. Restart
-the container after changes:
+### Docker
+
+Edit `docker/settings.yml` to enable/disable engines:
 
 ```bash
 cd docker && docker compose restart searxng
@@ -136,24 +119,24 @@ cd docker && docker compose restart searxng
 curl http://localhost:8888/healthz
 ```
 
-## Architecture
+## Test Results
 
-```
-Agent → web_search_v2 tool → SearxngClient → SearXNG API (localhost:8888)
-                                                     ↓
-                                               DuckDuckGo / Google / Bing
-```
+Tested over 4 rounds with 10 search categories each:
 
-- **No API keys needed** — SearXNG scrapes search engines directly
-- **Redis caching** — reduces duplicate requests
-- **Localhost only** — port bound to 127.0.0.1
+| Round | Score | Changes |
+|-------|-------|---------|
+| R1 | 7/10 | Baseline — DDG CAPTCHAs, junk results |
+| R2 | 5.5/10 | Added en-NZ locale — helped NZ queries, broke Bing |
+| R3 | 7/10 | Disabled DDG+Mojeek, forced Bing en-US — CJK reduced 70% |
+| R4 | **8/10** | Disabled Bing — zero CJK junk, all English results ✅ |
+
+Full reports in `/projects/searxng-test-report-r*.md`.
 
 ## Development
 
 ```bash
 npm install
-npm run build    # Compile TypeScript
-npm run dev      # Watch mode
+npm run build
 ```
 
 ## License
