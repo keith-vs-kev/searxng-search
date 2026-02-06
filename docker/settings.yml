@@ -61,15 +61,54 @@ engines:
     shortcut: wp
     disabled: false
 
-  # Disable engines that need API keys or are unreliable
-  - name: brave
-    engine: brave
-    disabled: true
+  # Qwant — French search engine, good for diversity
+  - name: qwant
+    engine: qwant
+    shortcut: qw
+    disabled: false
 
+  # Mojeek — independent index (not a meta-engine itself)
+  - name: mojeek
+    engine: mojeek
+    shortcut: mj
+    disabled: false
+
+  # Startpage — Google results via privacy proxy
+  - name: startpage
+    engine: startpage
+    shortcut: sp
+    disabled: false
+
+  # Wikidata — structured data
+  - name: wikidata
+    engine: wikidata
+    shortcut: wd
+    disabled: false
+
+  # GitHub — code search
+  - name: github
+    engine: github
+    shortcut: gh
+    disabled: false
+    categories: [it]
+
+  # StackOverflow — dev answers
+  - name: stackoverflow
+    engine: stackoverflow
+    shortcut: so
+    disabled: false
+    categories: [it]
+
+  # Google News
   - name: google news
     engine: google_news
     shortcut: gn
     disabled: false
+
+  # Disable engines that need API keys
+  - name: brave
+    engine: brave
+    disabled: true
 
 outgoing:
   request_timeout: 5.0
