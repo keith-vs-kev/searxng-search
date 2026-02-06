@@ -48,13 +48,11 @@ engines:
     shortcut: sp
     disabled: false
 
-  # Bing — force English locale to prevent CJK results
+  # DISABLED — leaks CJK results even with en-US locale
   - name: bing
     engine: bing
     shortcut: bi
-    disabled: false
-    language: en
-    region: en-US
+    disabled: true
 
   # Wikipedia — reference/context
   - name: wikipedia
