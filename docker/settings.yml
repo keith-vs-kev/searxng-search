@@ -61,12 +61,6 @@ engines:
     shortcut: wp
     disabled: false
 
-  # Qwant — French search engine, good for diversity
-  - name: qwant
-    engine: qwant
-    shortcut: qw
-    disabled: false
-
   # Mojeek — independent index (not a meta-engine itself)
   - name: mojeek
     engine: mojeek
@@ -89,13 +83,6 @@ engines:
   - name: github
     engine: github
     shortcut: gh
-    disabled: false
-    categories: [it]
-
-  # StackOverflow — dev answers
-  - name: stackoverflow
-    engine: stackoverflow
-    shortcut: so
     disabled: false
     categories: [it]
 
